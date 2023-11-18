@@ -1,5 +1,3 @@
-// gymBot.ts
-
 import {
   getUserOnboardingStatus,
   isHealthInfoCollected,

@@ -3,7 +3,7 @@ import {
   processIncomingMessage,
   handleNewJoinerMessage,
   handleOnboardedUserMessage,
-} from "./../controllers/gym-bot.controller"; // Import your message processing functions
+} from "./../controllers/gym-bot.controller";
 
 const router: Router = express.Router();
 
