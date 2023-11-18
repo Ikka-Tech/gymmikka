@@ -44,29 +44,18 @@ router.post("/chat", async (req: Request, res: Response) => {
 function sendWhatsAppMessage(to: string, body: string) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
-  //const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
+  const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
 
-  //const client = twilio(accountSid, authToken);
+  const client = twilio(accountSid, authToken);
   console.log("Sending", to, body);
-  // client.messages
-  //   .create({
-  //     body: body,
-  //     from: `whatsapp:${twilioNumber}`,
-  //     to: `${to}`,
-  //   })
-  //   .then((message) => console.log("Message sent:", message.sid))
-  //   .catch((error) => console.error("Error sending message:", error.message));
-
-  const client = require("twilio")(accountSid, authToken);
-
   client.messages
     .create({
       body: body,
-      from: "whatsapp:+14155238886",
-      to: "whatsapp:+917561831313",
+      from: `whatsapp:${twilioNumber}`,
+      to: `${to}`,
     })
-    .then((message: any) => console.log(message.sid))
-    .done();
+    .then((message) => console.log("Message sent:", message.sid))
+    .catch((error) => console.error("Error sending message:", error.message));
 }
 
 export default router;
