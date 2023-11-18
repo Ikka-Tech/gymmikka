@@ -7,7 +7,7 @@ import twilio from "twilio";
 const router: Router = express.Router();
 const phoneNumberRegex = /\bwhatsapp:(\+\d+)/;
 
-router.post("/webhook", async (req, res) => {
+router.post("/test", async (req, res) => {
   const { Body, From } = req.body;
 
   try {
@@ -19,7 +19,7 @@ router.post("/webhook", async (req, res) => {
   }
 });
 
-router.post("/chat", async (req: Request, res: Response) => {
+router.post("/webhook", async (req: Request, res: Response) => {
   const message = req.body.Body;
   const senderNumber: string = req.body.From;
 
