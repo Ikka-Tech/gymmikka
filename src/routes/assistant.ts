@@ -14,7 +14,6 @@ const openai = new OpenAIApi({
 const router: Router = express.Router();
 
 // Use body-parser to parse JSON bodies
-router.use(bodyParser.json());
 
 // Endpoint to create an assistant
 router.post("/create-assistant", async (req: Request, res: Response) => {

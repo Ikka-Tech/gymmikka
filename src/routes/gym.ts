@@ -1,13 +1,13 @@
 import express, { Router, Request, Response } from "express";
 import { processIncomingMessage } from "./../controllers/gym-bot.controller";
 import { getUserInstance } from "../services/user.service";
-import { AssistantService } from "../services/thread.service";
+import AssistantService from "../services/thread.service";
 import twilio from "twilio";
 
 const router: Router = express.Router();
 const phoneNumberRegex = /\bwhatsapp:(\+\d+)/;
 
-router.post("/test", async (req, res) => {
+router.post("/webhook", async (req, res) => {
   const { Body, From } = req.body;
 
   try {
@@ -19,11 +19,9 @@ router.post("/test", async (req, res) => {
   }
 });
 
-router.post("/webhook", async (req: Request, res: Response) => {
+router.post("/chat", async (req: Request, res: Response) => {
   const message = req.body.Body;
   const senderNumber: string = req.body.From;
-
-  console.log(message, senderNumber, req.body);
 
   const matchResult = senderNumber.match(phoneNumberRegex);
   const userId = matchResult ? matchResult[1] : "1";
