@@ -35,7 +35,7 @@ router.post("/chat", async (req: Request, res: Response) => {
   // Add a message to thread
   await assistantSession.addMessage(message);
   const response = await assistantSession.generateResponse();
-  await sendWhatsAppMessage(senderNumber, response);
+  sendWhatsAppMessage(senderNumber, response);
   res.send(response);
 });
 
