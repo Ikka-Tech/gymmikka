@@ -1,13 +1,11 @@
 import express, { Router, Request, Response } from "express";
-import {
-  processIncomingMessage,
-  handleNewJoinerMessage,
-  handleOnboardedUserMessage,
-} from "./../controllers/gym-bot.controller";
+import { processIncomingMessage } from "./../controllers/gym-bot.controller";
 import { getUserInstance } from "../services/user.service";
 import { AssistantService } from "../services/thread.service";
+import twilio from "twilio";
 
 const router: Router = express.Router();
+const phoneNumberRegex = /\bwhatsapp:(\+\d+)/;
 
 router.post("/webhook", async (req, res) => {
   const { Body, From } = req.body;
@@ -22,16 +20,41 @@ router.post("/webhook", async (req, res) => {
 });
 
 router.post("/chat", async (req: Request, res: Response) => {
+  const message = req.body.Body;
+  const senderNumber: string = req.body.From;
+
+  console.log(message, senderNumber, req.body);
+
+  const matchResult = senderNumber.match(phoneNumberRegex);
+  const userId = matchResult ? matchResult[1] : "1";
   // Get the message
-  const message = req.body.message;
-  const userId: number = req.body.userId;
+  // const message = req.body.message;
+  // const userId: number = req.body.userId;
   // Get the threadId using userId from dictionary
   const threadId: string =
-    (await getUserInstance().getUserThread(userId)) ?? "";
+    (await getUserInstance().getUserThread(parseInt(userId))) ?? "";
   const assistantSession = new AssistantService(threadId);
   // Add a message to thread
   await assistantSession.addMessage(message);
-  res.send(await assistantSession.generateResponse());
+  const response = await assistantSession.generateResponse();
+  res.send(response);
 });
+
+function sendWhatsAppMessage(to: string, body: string) {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
+
+  const client = twilio(accountSid, authToken);
+
+  client.messages
+    .create({
+      body: body,
+      from: `whatsapp:${twilioNumber}`,
+      to: `${to}`,
+    })
+    .then((message) => console.log("Message sent:", message.sid))
+    .catch((error) => console.error("Error sending message:", error.message));
+}
 
 export default router;
