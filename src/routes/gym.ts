@@ -35,14 +35,16 @@ router.post("/chat", async (req: Request, res: Response) => {
   // Add a message to thread
   await assistantSession.addMessage(message);
   const response = await assistantSession.generateResponse();
-  sendWhatsAppMessage(senderNumber, response);
+  await sendWhatsAppMessage(senderNumber, response);
   res.send(response);
 });
 
-function sendWhatsAppMessage(to: string, body: string) {
+async function sendWhatsAppMessage(to: string, body: string) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
+
+  console.log(accountSid, authToken, twilioNumber);
 
   const client = twilio(accountSid, authToken);
   console.info({
@@ -50,14 +52,12 @@ function sendWhatsAppMessage(to: string, body: string) {
     from: `whatsapp:${twilioNumber}`,
     to: `${to}`,
   });
-  client.messages
-    .create({
-      body: body,
-      from: `whatsapp:${twilioNumber}`,
-      to: `${to}`,
-    })
-    .then((message) => console.log("Message sent:", message.sid))
-    .catch((error) => console.error("Error sending message:", error.message));
+  var response = await client.messages.create({
+    body: body,
+    from: `whatsapp:${twilioNumber}`,
+    to: `${to}`,
+  });
+  console.log(response);
 }
 
 export default router;
