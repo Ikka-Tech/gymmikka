@@ -44,8 +44,6 @@ async function sendWhatsAppMessage(to: string, body: string) {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
 
-  console.log(accountSid, authToken, twilioNumber);
-
   const client = twilio(accountSid, authToken);
   console.info({
     body: body,
